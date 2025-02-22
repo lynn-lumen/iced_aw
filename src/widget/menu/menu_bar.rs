@@ -12,7 +12,9 @@ use iced::{
         widget::{tree, Operation, Tree},
         Clipboard, Layout, Shell, Widget,
     },
-    alignment, event, Element, Event, Length, Padding, Pixels, Rectangle, Size,
+    alignment, event,
+    mouse::Cursor,
+    Element, Event, Length, Padding, Pixels, Rectangle, Size,
 };
 
 use super::{common::*, flex, menu_bar_overlay::MenuBarOverlay, menu_tree::*};
@@ -177,48 +179,37 @@ where
         )
     }
 
-    fn on_event(
+    fn update(
         &mut self,
-        tree: &mut Tree,
-        event: event::Event,
+        state: &mut Tree,
+        event: &Event,
         layout: Layout<'_>,
-        cursor: mouse::Cursor,
+        cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
+        shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
+    ) {
         use event::Status::*;
 
-        let status = self
-            .roots
+        self.roots
             .iter_mut() // [Item...]
-            .zip(tree.children.iter_mut()) // [item_tree...]
+            .zip(state.children.iter_mut()) // [item_tree...]
             .zip(layout.children()) // [widget_node...]
             .map(|((item, tree), layout)| {
-                item.on_event(
-                    tree,
-                    event.clone(),
-                    layout,
-                    cursor,
-                    renderer,
-                    clipboard,
-                    shell,
-                    viewport,
+                item.update(
+                    tree, event, layout, cursor, renderer, clipboard, shell, viewport,
                 )
-            })
-            .fold(Ignored, event::Status::merge);
+            });
 
-        let bar = tree.state.downcast_mut::<MenuBarState>();
+        let bar = state.state.downcast_mut::<MenuBarState>();
         let bar_bounds = layout.bounds();
 
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
                 if cursor.is_over(bar_bounds) {
                     bar.is_pressed = true;
-                    Captured
-                } else {
-                    Ignored
+                    shell.capture_event();
                 }
             }
             Event::Mouse(mouse::Event::ButtonReleased(mouse::Button::Left)) => {
@@ -231,9 +222,7 @@ where
                             break;
                         }
                     }
-                    Captured
-                } else {
-                    Ignored
+                    shell.capture_event();
                 }
             }
             Event::Mouse(mouse::Event::CursorMoved { .. }) => {
@@ -248,14 +237,11 @@ where
                     } else {
                         bar.open = false;
                     }
-                    Captured
-                } else {
-                    Ignored
+                    shell.capture_event();
                 }
             }
-            _ => Ignored,
+            _ => (),
         }
-        .merge(status)
     }
 
     fn operate(

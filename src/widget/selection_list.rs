@@ -14,7 +14,6 @@ use iced::{
         Clipboard, Layout, Shell, Widget,
     },
     alignment::{Horizontal, Vertical},
-    event,
     mouse::{self, Cursor},
     widget::{
         container, scrollable,
@@ -249,18 +248,18 @@ where
         Node::with_children(size, vec![content])
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        self.container.on_event(
+    ) {
+        self.container.update(
             &mut state.children[0],
             event,
             layout

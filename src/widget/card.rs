@@ -308,26 +308,26 @@ where
         )
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
+        shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
+    ) {
         let mut children = layout.children();
 
         let head_layout = children
             .next()
             .expect("widget: Layout should have a head layout");
         let mut head_children = head_layout.children();
-        let head_status = self.head.as_widget_mut().on_event(
+        let head_status = self.head.as_widget_mut().update(
             &mut state.children[0],
-            event.clone(),
+            event,
             head_children
                 .next()
                 .expect("widget: Layout should have a head content layout"),
@@ -365,9 +365,9 @@ where
             .next()
             .expect("widget: Layout should have a body layout");
         let mut body_children = body_layout.children();
-        let body_status = self.body.as_widget_mut().on_event(
+        let body_status = self.body.as_widget_mut().update(
             &mut state.children[1],
-            event.clone(),
+            event,
             body_children
                 .next()
                 .expect("widget: Layout should have a body content layout"),
@@ -382,8 +382,8 @@ where
             .next()
             .expect("widget: Layout should have a foot layout");
         let mut foot_children = foot_layout.children();
-        let foot_status = self.foot.as_mut().map_or(event::Status::Ignored, |foot| {
-            foot.as_widget_mut().on_event(
+        let foot_status = self.foot.as_mut().map(|foot| {
+            foot.as_widget_mut().update(
                 &mut state.children[2],
                 event,
                 foot_children
@@ -397,10 +397,10 @@ where
             )
         });
 
-        head_status
-            .merge(close_status)
-            .merge(body_status)
-            .merge(foot_status)
+        // head_status
+        //     .merge(close_status)
+        //     .merge(body_status)
+        //     .merge(foot_status)
     }
 
     fn mouse_interaction(

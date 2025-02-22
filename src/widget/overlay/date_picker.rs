@@ -550,17 +550,18 @@ where
         node
     }
 
-    fn on_event(
+    fn update(
         &mut self,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
-    ) -> event::Status {
+    ) {
         if event::Status::Captured == self.on_event_keyboard(&event) {
-            return event::Status::Captured;
+            shell.capture_event();
+            return;
         }
 
         let mut children = layout.children();
@@ -590,9 +591,9 @@ where
             .next()
             .expect("widget: Layout should have a cancel button layout for a DatePicker");
 
-        let cancel_status = self.cancel_button.on_event(
+        let cancel_status = self.cancel_button.update(
             &mut self.tree.children[0],
-            event.clone(),
+            event,
             cancel_button_layout,
             cursor,
             renderer,
@@ -607,7 +608,7 @@ where
 
         let mut fake_messages: Vec<Message> = Vec::new();
 
-        let submit_status = self.submit_button.on_event(
+        let submit_status = self.submit_button.update(
             &mut self.tree.children[1],
             event,
             submit_button_layout,
@@ -622,10 +623,10 @@ where
             shell.publish((self.on_submit)(self.state.date.into()));
         }
 
-        month_year_status
-            .merge(days_status)
-            .merge(cancel_status)
-            .merge(submit_status)
+        // month_year_status
+        //     .merge(days_status)
+        //     .merge(cancel_status)
+        //     .merge(submit_status)
     }
 
     fn mouse_interaction(

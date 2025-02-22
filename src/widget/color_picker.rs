@@ -200,18 +200,18 @@ where
             .layout(&mut tree.children[0], renderer, limits)
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
+        shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        self.underlay.as_widget_mut().on_event(
+    ) {
+        self.underlay.as_widget_mut().update(
             &mut state.children[0],
             event,
             layout,

@@ -527,17 +527,17 @@ where
             .layout(tab_tree, renderer, &limits.loose())
     }
 
-    fn on_event(
+    fn update(
         &mut self,
-        _state: &mut Tree,
-        event: Event,
+        state: &mut Tree,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
-        _renderer: &Renderer,
-        _clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
-        _viewport: &Rectangle,
-    ) -> event::Status {
+        renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
+        shell: &mut Shell<Message>,
+        viewport: &Rectangle,
+    ) {
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left))
             | Event::Touch(touch::Event::FingerPressed { .. }) => {
@@ -569,12 +569,11 @@ where
                                     |on_close| (on_close)(self.tab_indices[new_selected].clone()),
                                 ),
                         );
-                        return event::Status::Captured;
+                        shell.capture_event();
                     }
                 }
-                event::Status::Ignored
             }
-            _ => event::Status::Ignored,
+            _ => (),
         }
     }
 

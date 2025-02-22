@@ -15,6 +15,7 @@ use iced::{
     },
     alignment,
     event::{self, Event},
+    mouse::Cursor,
     widget::Column,
     Alignment, Element, Length, Padding, Pixels, Point, Rectangle, Size, Vector,
 };
@@ -325,34 +326,26 @@ where
         });
     }
 
-    fn on_event(
+    fn update(
         &mut self,
-        tree: &mut Tree,
-        event: Event,
+        state: &mut Tree,
+        event: &Event,
         layout: Layout<'_>,
-        cursor: mouse::Cursor,
+        cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
+        shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
+    ) {
         self.children
             .iter_mut()
-            .zip(&mut tree.children)
+            .zip(&mut state.children)
             .zip(layout.children())
             .map(|((child, state), layout)| {
-                child.as_widget_mut().on_event(
-                    state,
-                    event.clone(),
-                    layout,
-                    cursor,
-                    renderer,
-                    clipboard,
-                    shell,
-                    viewport,
+                child.as_widget_mut().update(
+                    state, event, layout, cursor, renderer, clipboard, shell, viewport,
                 )
-            })
-            .fold(event::Status::Ignored, event::Status::merge)
+            });
     }
 
     fn mouse_interaction(

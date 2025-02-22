@@ -125,19 +125,18 @@ where
         Node::new(intrinsic)
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
-        _renderer: &Renderer,
-        _clipboard: &mut dyn Clipboard,
+        renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
-        _viewport: &Rectangle,
-    ) -> event::Status {
+        viewport: &Rectangle,
+    ) {
         let bounds = layout.bounds();
-        let mut status = event::Status::Ignored;
         let list_state = state.state.downcast_mut::<ListState>();
         let cursor = cursor.position().unwrap_or_default();
 
@@ -164,23 +163,17 @@ where
                         }
                     }
 
-                    status =
-                        list_state
-                            .last_selected_index
-                            .map_or(event::Status::Ignored, |last| {
-                                if let Some(option) = self.options.get(last.0) {
-                                    shell.publish((self.on_selected)(last.0, option.clone()));
-                                    event::Status::Captured
-                                } else {
-                                    event::Status::Ignored
-                                }
-                            });
+                    list_state.last_selected_index.map(|last| {
+                        if let Some(option) = self.options.get(last.0) {
+                            shell.publish((self.on_selected)(last.0, option.clone()));
+                            shell.capture_event();
+                        }
+                        ()
+                    });
                 }
                 _ => {}
             }
         }
-
-        status
     }
 
     fn mouse_interaction(

@@ -393,20 +393,20 @@ where
     }
 
     #[allow(clippy::too_many_lines, clippy::cognitive_complexity)]
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
+    ) {
         let mut messages = Vec::new();
         let mut sub_shell = Shell::new(&mut messages);
-        let status = self.text_input.on_event(
+        let status = self.text_input.update(
             state,
             event,
             layout,
@@ -417,8 +417,10 @@ where
             viewport,
         );
 
-        if let Some(redraw) = sub_shell.redraw_request() {
-            shell.request_redraw(redraw);
+        match sub_shell.redraw_request() {
+            iced::window::RedrawRequest::NextFrame => shell.request_redraw(),
+            iced::window::RedrawRequest::At(t) => shell.request_redraw_at(t),
+            iced::window::RedrawRequest::Wait => (),
         }
         if sub_shell.is_layout_invalid() {
             shell.invalidate_layout();

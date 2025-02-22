@@ -174,29 +174,30 @@ where
         }
     }
 
-    fn on_event(
+    fn update(
         &mut self,
         state: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
+        shell: &mut Shell<Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        if event == Event::Mouse(mouse::Event::ButtonPressed(Button::Right)) {
+    ) {
+        if event == &Event::Mouse(mouse::Event::ButtonPressed(Button::Right)) {
             let bounds = layout.bounds();
 
             if cursor.is_over(bounds) {
                 let s: &mut State = state.state.downcast_mut();
                 s.cursor_position = cursor.position().unwrap_or_default();
                 s.show = !s.show;
-                return event::Status::Captured;
+                shell.capture_event();
+                return;
             }
         }
 
-        self.underlay.as_widget_mut().on_event(
+        self.underlay.as_widget_mut().update(
             &mut state.children[0],
             event,
             layout,

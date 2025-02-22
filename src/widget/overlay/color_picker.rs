@@ -612,19 +612,20 @@ where
         node
     }
 
-    fn on_event(
+    fn update(
         &mut self,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
-    ) -> event::Status {
+    ) {
         if event::Status::Captured == self.on_event_keyboard(&event) {
             self.state.sat_value_canvas_cache.clear();
             self.state.hue_canvas_cache.clear();
-            return event::Status::Captured;
+            shell.capture_event();
+            return;
         }
 
         let mut children = layout.children();
@@ -661,9 +662,9 @@ where
         let cancel_button_layout = block2_children
             .next()
             .expect("widget: Layout should have a cancel button layout for a ColorPicker");
-        let cancel_button_status = self.cancel_button.on_event(
+        let cancel_button_status = self.cancel_button.update(
             &mut self.tree.children[0],
-            event.clone(),
+            event,
             cancel_button_layout,
             cursor,
             renderer,
@@ -675,7 +676,7 @@ where
         let submit_button_layout = block2_children
             .next()
             .expect("widget: Layout should have a submit button layout for a ColorPicker");
-        let submit_button_status = self.submit_button.on_event(
+        let submit_button_status = self.submit_button.update(
             &mut self.tree.children[1],
             event,
             submit_button_layout,
@@ -698,11 +699,11 @@ where
             self.state.hue_canvas_cache.clear();
         }
 
-        status
-            .merge(hsv_color_status)
-            .merge(rgba_color_status)
-            .merge(cancel_button_status)
-            .merge(submit_button_status)
+        // status
+        //     .merge(hsv_color_status)
+        //     .merge(rgba_color_status)
+        //     .merge(cancel_button_status)
+        //     .merge(submit_button_status)
     }
 
     fn mouse_interaction(

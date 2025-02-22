@@ -332,18 +332,10 @@ where
             .zip(tree.children[slice.start_index..=slice.end_index].iter_mut()) // [item_tree...]
             .zip(slice_layout.children()) // [item_layout...]
             .map(|((item, tree), layout)| {
-                item.on_event(
-                    tree,
-                    event.clone(),
-                    layout,
-                    cursor,
-                    renderer,
-                    clipboard,
-                    shell,
-                    viewport,
+                item.update(
+                    tree, event, layout, cursor, renderer, clipboard, shell, viewport,
                 )
-            })
-            .fold(Ignored, event::Status::merge);
+            });
 
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
@@ -374,7 +366,6 @@ where
             }
             _ => Ignored,
         }
-        .merge(status)
     }
 
     pub(super) fn operate(
@@ -755,18 +746,18 @@ where
 
     /// tree: Tree{stateless, \[widget_tree, menu_tree]}
     ///
-    pub(super) fn on_event(
+    pub(super) fn update(
         &mut self,
         tree: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        self.item.as_widget_mut().on_event(
+    ) {
+        self.item.as_widget_mut().update(
             &mut tree.children[0],
             event,
             layout,

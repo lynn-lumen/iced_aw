@@ -22,7 +22,6 @@
 //! * `widget_id_return` (Author: Andrew Wheeler <genusistimelord@gmail.com>)
 //! * `wrap` (Author: owntime <yrainbxqc@gmail.com>)
 #![deny(missing_docs)]
-#![deny(unused_results)]
 #![forbid(unsafe_code)]
 #![warn(
     clippy::pedantic,

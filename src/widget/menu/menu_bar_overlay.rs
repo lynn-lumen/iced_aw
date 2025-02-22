@@ -13,7 +13,9 @@ use iced::{
         widget::{Operation, Tree},
         Clipboard, Layout, Shell,
     },
-    event, Event, Point, Rectangle, Size, Vector,
+    event,
+    mouse::Cursor,
+    Event, Point, Rectangle, Size, Vector,
 };
 
 use super::{common::*, menu_bar::MenuBarState, menu_tree::*};
@@ -180,15 +182,15 @@ where
     }
 
     #[allow(unused_results)]
-    fn on_event(
+    fn update(
         &mut self,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
-        cursor: mouse::Cursor,
+        cursor: Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
-        shell: &mut Shell<'_, Message>,
-    ) -> event::Status {
+        shell: &mut Shell<Message>,
+    ) {
         use event::Status::*;
 
         let viewport = layout.bounds();
@@ -199,12 +201,12 @@ where
         let bar = self.tree.state.downcast_mut::<MenuBarState>();
 
         let Some(active) = bar.active_root else {
-            return Ignored;
+            return;
         };
 
         let parent_bounds = roots_layout.children().nth(active).unwrap().bounds();
         let Some(menu_layouts_layout) = lc.next() else {
-            return Ignored;
+            return;
         }; // Node{0, [menu_node...]}
         let mut menu_layouts = menu_layouts_layout.children(); // [menu_node...]
 
@@ -336,12 +338,12 @@ where
         );
 
         match re {
-            RecEvent::Event => Captured,
+            RecEvent::Event => shell.capture_event(),
             RecEvent::Close | RecEvent::None => {
                 if cursor.is_over(bar_bounds) {
-                    Ignored
+                    ()
                 } else {
-                    Captured
+                    shell.capture_event();
                 }
             }
         }
