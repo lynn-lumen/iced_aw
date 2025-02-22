@@ -13,7 +13,6 @@ use iced::{
         widget::{Operation, Tree},
         Clipboard, Layout, Shell,
     },
-    event,
     mouse::Cursor,
     Event, Point, Rectangle, Size, Vector,
 };
@@ -191,7 +190,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<Message>,
     ) {
-        use event::Status::*;
+        
 
         let viewport = layout.bounds();
         let mut lc = layout.children();

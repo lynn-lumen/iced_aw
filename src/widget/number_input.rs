@@ -11,8 +11,7 @@ use iced::{
         },
         Clipboard, Layout, Shell, Widget,
     },
-    alignment::{Horizontal, Vertical},
-    event, keyboard,
+    alignment::{Horizontal, Vertical}, keyboard,
     mouse::{self, Cursor},
     widget::{
         text::{LineHeight, Wrapping},

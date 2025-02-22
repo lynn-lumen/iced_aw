@@ -15,7 +15,6 @@ use iced::{
         widget::tree::{self, Tag, Tree},
         Clipboard, Layout, Shell, Widget,
     },
-    event,
     mouse::{self, Cursor},
     Color,
     Element,

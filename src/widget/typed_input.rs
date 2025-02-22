@@ -10,7 +10,6 @@ use iced::advanced::widget::{
 use iced::advanced::{Clipboard, Shell};
 use iced::mouse::{self, Cursor};
 use iced::{
-    event,
     widget::text_input::{self, TextInput},
     Event, Size,
 };

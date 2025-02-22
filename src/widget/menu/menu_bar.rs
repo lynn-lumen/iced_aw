@@ -12,7 +12,7 @@ use iced::{
         widget::{tree, Operation, Tree},
         Clipboard, Layout, Shell, Widget,
     },
-    alignment, event,
+    alignment,
     mouse::Cursor,
     Element, Event, Length, Padding, Pixels, Rectangle, Size,
 };
@@ -190,7 +190,7 @@ where
         shell: &mut Shell<Message>,
         viewport: &Rectangle,
     ) {
-        use event::Status::*;
+        
 
         self.roots
             .iter_mut() // [Item...]

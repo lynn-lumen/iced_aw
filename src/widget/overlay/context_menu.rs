@@ -14,7 +14,6 @@ use iced::{
         widget::Tree,
         Clipboard, Layout, Shell,
     },
-    event::Status,
     keyboard,
     mouse::{self, Cursor},
     touch, window, Border, Color, Element, Event, Point, Rectangle, Shadow, Size,

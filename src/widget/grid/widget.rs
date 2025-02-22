@@ -6,7 +6,6 @@ use iced::{
         widget::{Operation, Tree},
         Clipboard, Layout, Shell, Widget,
     },
-    event,
     mouse::{self, Cursor},
     overlay, Element, Event, Length, Rectangle, Size, Vector,
 };

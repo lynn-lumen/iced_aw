@@ -7,7 +7,6 @@ use iced::{
         widget::{tree, Operation, Tree},
         Clipboard, Layout, Shell, Widget,
     },
-    event,
     mouse::{self, Button, Cursor},
     Element, Event, Length, Point, Rectangle, Vector,
 };

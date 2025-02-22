@@ -14,7 +14,7 @@ use iced::{
         Clipboard, Layout, Shell, Widget,
     },
     alignment,
-    event::{self, Event},
+    event::{Event},
     mouse::Cursor,
     widget::Column,
     Alignment, Element, Length, Padding, Pixels, Point, Rectangle, Size, Vector,

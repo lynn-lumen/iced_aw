@@ -13,7 +13,6 @@ use iced::{
         Clipboard, Layout, Shell, Widget,
     },
     alignment::{Horizontal, Vertical},
-    event,
     mouse::{self, Cursor},
     touch,
     widget::text::{LineHeight, Wrapping},

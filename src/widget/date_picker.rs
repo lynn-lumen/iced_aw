@@ -16,7 +16,6 @@ use iced::{
         },
         Clipboard, Layout, Shell, Widget,
     },
-    event,
     mouse::{self, Cursor},
     Element,
     Event,

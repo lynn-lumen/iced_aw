@@ -23,7 +23,6 @@ use iced::{
         Clipboard, Layout, Shell, Widget,
     },
     alignment::{self, Horizontal, Vertical},
-    event,
     mouse::{self, Cursor},
     touch,
     widget::{
