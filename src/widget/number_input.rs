@@ -11,7 +11,8 @@ use iced::{
         },
         Clipboard, Layout, Shell, Widget,
     },
-    alignment::{Horizontal, Vertical}, keyboard,
+    alignment::{Horizontal, Vertical},
+    keyboard,
     mouse::{self, Cursor},
     widget::{
         text::{LineHeight, Wrapping},
@@ -122,10 +123,8 @@ where
     /// It expects:
     /// - the current value
     /// - the bound values
-    /// - a function that produces a message when the [`NumberInput`] changes
-    pub fn new<F>(value: &T, bounds: impl RangeBounds<T>, on_change: F) -> Self
+    pub fn new(value: &T, bounds: impl RangeBounds<T>) -> Self
     where
-        F: 'static + Fn(T) -> Message + Clone,
         T: 'static,
     {
         let padding = DEFAULT_PADDING;
@@ -142,7 +141,7 @@ where
                 .padding(padding)
                 .width(Length::Fixed(127.0))
                 .class(Theme::default_input()),
-            on_change: Some(Box::new(on_change)),
+            on_change: None,
             on_submit: None,
             on_paste: None,
             class: <Theme as style::number_input::Catalog>::default(),
@@ -462,12 +461,20 @@ where
 
     /// Checks if the value can be increased by the step
     fn can_increase(&self) -> bool {
-        self.valid(&(self.value.clone() + self.step.clone())) || self.value < self.max()
+        if T::max_value() == self.value {
+            false
+        } else {
+            self.valid(&(self.value.clone() + self.step.clone())) || self.value < self.max()
+        }
     }
 
     /// Checks if the value can be decreased by the step
     fn can_decrease(&self) -> bool {
-        self.valid(&(self.value.clone() - self.step.clone())) || self.value > self.min()
+        if T::min_value() == self.value {
+            false
+        } else {
+            self.valid(&(self.value.clone() - self.step.clone())) || self.value > self.min()
+        }
     }
 
     /// Checks if the [`NumberInput`] is disabled

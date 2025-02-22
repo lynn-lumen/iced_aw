@@ -326,7 +326,7 @@ where
         + Copy
         + Bounded,
 {
-    crate::NumberInput::new(value, bounds, on_change)
+    crate::NumberInput::new(value, bounds).on_input(on_change)
 }
 
 #[cfg(feature = "typed_input")]
